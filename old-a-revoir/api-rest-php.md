@@ -1,27 +1,73 @@
 ```Article en cours de relecture```
 
-## Le Web 2.0 ✈ ✈
+# Créer une API REST en PHP : Les B.A.-B.A. 
 ### Prérequis
-``` Avoir une fois créer un script php```
-### Contexte :
-Alors pourquoi parlez du web 2.0? 💆
 
-Comme tu as une fois réussi à soumettre un formulaire en php, tu sais qu'à chaque submit du formulaire ta page se réactualise.
+*Avoir déjà mis en place une page HTML qui dialogue avec un script PHP.*
 
-Et lorsque tu like une vidéo sur youtube oubien que tu y poste un commentaire cela ne remet pas la vidéo à zéro donc la page se reactualise pas meme si les donnees on ete bien envoyer. Le web 2.0 est généralement conçu via des frameworks  JS récent comme Angular ou React pour ne citer que ceux-là.
+Si tu as déjà osé créer une page HTML et la faire interagir avec PHP, prouve-le en réalisant cet exemple simple 💆:
 
-Api Rest
+**index.html**
+
+```html
+<!-- index.html -->
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Interaction HTML & PHP</title>
+</head>
+<body>
+  <form action="process.php" method="post">
+    <label for="username">Votre nom :</label>
+    <input type="text" name="username" id="username" placeholder="Entrez votre nom">
+    <button type="submit">Envoyer</button>
+  </form>
+</body>
+</html>
+```
+**process.php**
+
+```php
+/*
+  process.php
+*/
+
+    <?php
+        if (isset($_POST['username'])) {
+            $username = htmlspecialchars($_POST['username']);
+            echo "Bonjour, " . $username . " !";
+        } else {
+            echo "Aucun nom reçu.";
+        }
+    ?>
+```
+
+### Contexte le web 2.0:
+✨ Cet article a été écrit en 2020, mais nous le conservons pour souligner l’importance de maîtriser la création d’une API avec le langage (ex. PHP) **avant** de basculer sur des frameworks plus complexes tels que Symfony. 🚀
+
+
+Alors, pourquoi parler du **web 2.0** ? 💆
+
+Comme tu as déjà réussi à soumettre un formulaire en PHP, tu sais qu’à chaque fois que tu valides le formulaire, ta page se réactualise.
+
+Et lorsque tu likes une vidéo sur YouTube ou que tu y postes un commentaire, cela ne remet pas la vidéo à zéro ; la page ne se réactualise pas, même si les données ont bien été envoyées. Le web 2.0 est généralement conçu via des **frameworks JS récents** comme **Angular** ou **React**, pour ne citer qu’eux.
+
+
+## Api REST ✈ ✈
 Essayons de faire plus simple ⛹ !
 
-Le mot Api de par son sigle désigne tout simplement une Interface d'Application Programmable . En résumer c'est un outil qui permet une communication facile entre le front ( Angular, Vue .. ) et le back (php, node) . Par exemple :
+Le mot **API**, de par son sigle, désigne tout simplement une **Interface d’Application Programmable**. En résumé, c’est un outil qui permet une communication facile entre le **front** (Angular, Vue, etc.) et le **back** (PHP, Node…). Par exemple :
 
-* le front demande à afficher une liste des clients et le back lui offre ceci (https://domain.com/custemers)
+- Le front demande à afficher une liste de clients et le back lui retourne ceci :  
+  [https://domain.com/customers](https://domain.com/customers)
+- Le front demande les informations de l’utilisateur **4**, alors le back répond ceci :  
+  [https://domain.com/user/4](https://domain.com/user/4)
+- Le front veut sauvegarder des commandes dans une base de données, alors le back lui propose ceci :  
+  [https://domain.com/orders](https://domain.com/orders)
 
-* le front demande les informations de l'utilisateur 4 alors le back répond ceci (https://domaine.com/user/4)
-
-* le front veut sauvegarder les commandes dans une base de données alors le back lui offre ceci (https://domaine.com/orders)
-
- je crois qu'on a compris 🦳
+Je crois qu’on a compris 🦳
 
 Question ? et si on veut supprimer cet utilisateur 4 ?
 
@@ -34,7 +80,7 @@ Je suis d'accord, mais c'est là où va intervenir notre développeur back pour 
 Vous avez donc compris qu'une API REST nécessite donc une vraie documentation.
 
 Requete - Reponse
-Si on parle ici du web 2.0 c'est qu'on a deja compris les b.a-ba classique du fonctionnement du web. On va s'attarder un peu sur ces requêtes http émissent par le client (navigateur).
+Si on parle ici du web 2.0 c'est qu'on a deja compris les b-a-ba classique du fonctionnement du web. On va s'attarder un peu sur ces requêtes http émissent par le client (navigateur).
 
 >> Si on est natif de php on sais deja comment emmetre des requettes GET et POST pour recuperer ou envoyer des donnees au serveur. on y est deja habituer que ce bout de code nous devient toute logique.
 
@@ -45,7 +91,7 @@ Si on parle ici du web 2.0 c'est qu'on a deja compris les b.a-ba classique du fo
      $title = htmlspecialchars($_POST['title'] 
  ?>
 ```
-Ils ont si connu, car jusqu'à présent le HTML classique ne sais faire que ça.
+Ils sont si connu, car jusqu'à présent le HTML classique ne sais faire que ça.
 ```html
   <form  method="get" action="posts" />   
   <form method="post" action="edit"/>
@@ -69,13 +115,17 @@ Ils ont si connu, car jusqu'à présent le HTML classique ne sais faire que ça.
 } 
  	?>
 ```
+
 # Vif du sujet
-Allez assez parler, commençons à concevoir une api qui récupère une liste de posts.
 
-On va utiliser un design pattern toute simple
+Assez parlé, passons aux choses sérieuses : concevons une API qui récupère une liste de posts.
 
-On commence par créer un dossier vide qu'on va appeler back et suivre cette arborescence
-un dossier back puis un dossier src et un fichier index.php a la racine . Et dans le dossier src on cree 3 dossiers (Controller - Entity -Repository )
+Nous allons adopter un design pattern des plus simples.
+
+Pour commencer, créons un dossier que nous nommerons **back** et suivons cette arborescence :  
+- À la racine, le dossier **back** qui contiendra un fichier **index.php**  
+- À l'intérieur, un dossier **src** dans lequel nous créerons trois sous-dossiers : **Controller**, **Entity** et **Repository**
+
 
 > back
 > ===> src
@@ -84,19 +134,25 @@ un dossier back puis un dossier src et un fichier index.php a la racine . Et dan
 > ========>Repository
 > ===>index.php
 
- Allez le principe est simple ! le point d'entrer est notre index.php qui va être notre routeur principal
+Allez, c'est simple ! Le point d'entrée de notre application est le fichier **index.php**, qui joue le rôle de routeur principal.
 
-Si un utilisateur demande une route spécifique, alors le routeur interroge le Controller spécifier; et ce Controller fais appel au Repository qui va faire le traitement sur les données en utilisant l'Entity .👴. ( tkt ça va venir ).
+Lorsqu'un utilisateur sollicite une route spécifique, le routeur se charge d'interroger le contrôleur concerné. Ce dernier, à son tour, fait appel au repository pour traiter les données en s'appuyant sur l'entité correspondante. 👴 (T'inquiète, ça va venir !)
 
-### Les Models
-Parlez de backend nécessite forcément de nos jours d'une connexion à une base de donnée
 
-Ici, on va utiliser Mysql et y créer une base de donnée appeler labe et une table nommée post
-> ```Entity Manager.php ```
+### Les Modèles 🗃️
 
-Dans le dossier Entity, on crée un fichier qu'on va appeler Manager.php et y coller se code classique pour se connecter à une bdd avec Pdo
+Parler de backend nécessite aujourd'hui une connexion à une base de données.
+
+Ici, nous allons utiliser MySQL pour créer une base de données appelée **labe** et une table nommée **post**.
+
+> ```Entity Manager.php```
+
+Dans le dossier **Entity**, créez un fichier nommé **Manager.php** et collez-y ce code classique pour se connecter à une BDD avec PDO.
+
+
 ```php
 <?php
+//manager.php
 namespace Pabiosoft\Entity;
 
 class Manager
@@ -120,6 +176,7 @@ class Manager
 On va créer dans ce même dossier ( entity) un fichier Post.php qui va être une abstraction de notre table post avec les mêmes caractéristiques
 ```php
 <?php
+//Post.php
 namespace Pabiosoft\Entity;
 
 class Post
@@ -158,13 +215,14 @@ class Post
     }
 }
 ```
->Le Repository PostRepository.php
+>Le Repository PostRepository.php 🗄️
 
 Dans le dossier Repository créer un fichier nommer PostRepository qui va contenir toute nos différentes requêtes lier à la table post.
 
 Et y ajouter deux methods (une pour récupérer les posts et une pour insérer des posts
 ```php
 <?php
+//PostRepository.php
 namespace Pabiosoft\Repository;
 
 use Pabiosoft\Entity\Manager;
@@ -193,7 +251,7 @@ class PostRepository extends Manager
 
 }
 ```
-> ``` Les Contrôleurs```
+### Les Contrôleurs ⚙️
 
 Le contrôler c'est un peu comme la boite à vitesse d'une voiture qui attende les missions du chauffeur puis commissionne un comportement au moteur.
 
@@ -205,6 +263,7 @@ Dans le dossier Contrôler, on crée un fichier nommé PostController.php
 
 ```php
 <?php
+//PostController.php
 namespace Pabiosoft\Controller;
 
 use \Pabiosoft\Entity\Post;
@@ -267,15 +326,16 @@ class PostController{
         }
     }
 }
-}
 ```
-> ``` Le Routeur index.php ```
+### Le Routeur index.php 🔀
 
-On sait déjà que l'index.php c'est le point d'entrer de notre api ; donc c'est là où tout va se passer
+On sait déjà que l'index.php est le point d'entrée de notre API, c'est donc là que tout se passe.
 
-Alors. Il vaut mieux partir sur de bonne base solide, car un routeur mal fait implique et disons 99,99% de failles de sécurité
+Il est primordial de partir sur de bonnes bases solides, car un routeur mal conçu peut entraîner, disons, 99,99 % de failles de sécurité.
 
-La chose la plus simple serait de concevoir ce routeur en utilisant les actions demandé par l'utilisateur afin d'interroger le bon contrôleur comme ceci
+La solution la plus simple serait de concevoir ce routeur en utilisant les actions demandées par l'utilisateur afin d'interroger le bon contrôleur, comme ceci :
+
+
 ```php
 <?php
 if($_GET['action'] == 'posts') : posts() ? echo '404 par exemple '; 
@@ -283,21 +343,22 @@ if($_GET['action'] == 'posts') : posts() ? echo '404 par exemple ';
  // pour le tester n'oublier pas d'importer le controller
  ?>
 ```
-Dans ce cas de figure, si l'utilisateur essayait d'y accéder à ceci
+Dans ce cas de figure, si l'utilisateur essayait d'accéder à ceci  
+
 ```bash
 http://localhost:8000/?action=posts
 ```
-Cela allait bien marcher, car cette action appelle la méthode posts() du contrôleur PostController qui a son tour récupère les bonnes données du Model (Post et PostRepository )
+cela fonctionnait parfaitement, car cette action appelait la méthode posts() du contrôleur PostController qui, à son tour, récupérait les bonnes données du modèle (Post et PostRepository).
 
-Mais bon, nous, on aimerait que notre API ait du beau URL sans utiliser de fichier .htaccess (que je vous déconseille d'ailleurs)
+Mais bon, nous, on aimerait que notre API dispose de belles URL sans utiliser de fichier .htaccess (que je vous déconseille d'ailleurs).
 
 Alors notre but, c'est d'avoir ceci
 ```bash
 http://localhost:8000/posts
 ```
-Qui nous retourne du Json ( l'objet qu'on a créé dans la méthode posts du contrôler PostController )
+qui nous retourne du JSON (l'objet qu'on a créé dans la méthode posts du contrôleur PostController).
 
-Et pour ce faire, on va utiliser un bundle très populaire appeler Fast Routeur
+Et pour ce faire, nous allons utiliser un bundle très populaire appelé Fast Routeur.
 
 🪔 Qui parle d'utiliser un bundle implique Composer
 
@@ -323,13 +384,12 @@ Dans le fichier composer.json ajouter de la ligne 5 à la ligne 9 pour la gestio
       }
 }
 ```
-> ``` Les namespaces ```
+### Les namespaces 📦
 
-c'est juste un espace de nom, quand vous observez bien vos différents classe récemment créer
-
-Il possédait toutes un namespace en haut du fichier
+C'est simplement un espace de noms. Si vous observez bien vos différentes classes récemment créées, elles possèdent toutes un namespace en haut du fichier.
 
 Pour l'entité post, on avais ceci
+
 ```php
 <?php
 namespace Pabiosoft\Entity;
@@ -344,24 +404,30 @@ Pour le Repository  PostRepository on avais ceci
 <?php
 namespace Pabiosoft\Repository;
 ```
-Ce qu'on fait, c'est qu'à chaque fois qu'on crée une classe, on la met à l'intérieur d'un sac
+Ce que nous faisons, c'est que, chaque fois que nous créons une classe, nous la plaçons dans un sac 🎒.
 
-Donc si un jour, on veut accéder à cette classe, on ouvre juste le bon sac à chaque fois, par exemple dans le Contrôler, on a
+Ainsi, si un jour nous voulons accéder à cette classe, il nous suffit d'ouvrir le bon sac. Par exemple, dans le contrôleur, nous avons :
+
+
 ```php
 <?php
 use \Pabiosoft\Entity\Post;
 use \Pabiosoft\Repository\PostRepository;
 
 ```
-Et dans notre composer.json tout a l'heur à la ligne 7 grosso modo on specifie a l'autolodeur de composer quelle est notre namespace de base et ou le trouver
+Et dans notre composer.json, dès la ligne 7, grosso modo, on spécifie à l'autoloader de Composer quelle est notre namespace de base et où la trouver.
 
-il s'appelle Pabiosoft et il se trouve dans le dossier src
+Elle s'appelle **Pabiosoft** et se trouve dans le dossier **src**.
 
-👽 Allez, on fera un autre article pour démystifier, composer, mais pour notre api, on a eu ce qu'on voulait
-On est enfin prêt pour construire ce fameux routeur (index.php)
-Vous pouvez faire un tour sur le dépôt de nikic pour comprendre de plus en détails, son bundle  [github/nikic/fasRoute](https://github.com/nikic/FastRoute)
+👽 Allez, on fera un autre article pour démystifier Composer, mais pour notre API, nous avons obtenu ce que nous voulions.
+Nous sommes enfin prêts à construire ce fameux routeur (index.php).
+Vous pouvez jeter un œil sur le dépôt de nikic pour comprendre plus en détail son bundle : [github/nikic/FastRoute](https://github.com/nikic/FastRoute)
 
-Je vous offre ce code, on va l'explication plus bas (🏇 prend 3 minutes pour essayer de le comprendre cela aide beaucoup)
+
+Je vous offre ce code vanilla, dont l'explication se trouve plus bas (🏇 prenez 3 minutes pour l'examiner, cela vous sera très utile — il fonctionne, mais pourrait être refactorisé).
+
+
+
 ```php
 <?php
 
@@ -420,6 +486,7 @@ elseif($routeInfo[0] == FastRoute\Dispatcher::METHOD_NOT_ALLOWED){
 }
 ```
 Alors la directrice, c'est la méthode simpleDispather qui prend en callback les differentes route de notre API .
+
 ```php
 <?php
 require 'vendor/autoload.php';
@@ -463,18 +530,20 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
 ```
 Bien evidement il faudra créer la méthode post() dans PostController qui retourne le post qui a comme id 2. (🏇 je te fais confiance)
 
-Gestion des erreurs
-Comme tu as bien lu le routeur actuel, tu as remarqué que j'appelle deux methodes
+### Gestion des erreurs ⚠️
 
-À la ligne 44, une erro404 qui se trouve dans un HomeController
+Comme tu as bien pu le constater dans le routeur actuel ``index.php``, j'appelle deux méthodes :
 
-À la ligne 53, une erro405 qui se trouve également dans le HomeController
+- À la ligne 44, une `error404` qui se trouve dans le HomeController.
+- À la ligne 53, une `error405` qui se trouve également dans le HomeController.
 
-Oui c'est ça
+Oui, c'est bien ça.
 
-On Va créer un Fichier appeler HomeController dans le dossier Contrôler (n'oublie pas de le mètre dans le bon sac => namespace Pabiosoft/Controller )
+Nous allons créer un fichier appelé **HomeController** dans le dossier **Contrôleur** (n'oublie pas de le mettre dans le bon sac, c'est-à-dire dans le namespace `Pabiosoft\Controller`).
+
 
 À l'intérieur créé les deux méthodes. Et ```php echo 'pages not found' ; ``` dans la méthode error404() et ```php echo 'page not allowed ';  ```dans la methode error405()
+
 ```php
 <?php
 namespace Pabiosoft\Controller;
@@ -529,6 +598,25 @@ Puis dans le navigateur accède  http://localhost:8000/post
     },
 ]
 ```
+
+## Conclusion 🚀
+
+Bravo, tu as suivi toutes les étapes et créé une API REST en PHP ! 🎉
+
+Il est maintenant temps de passer à la pratique et de tester ton petit projet en local. N’hésite pas à explorer de nouvelles routes, à améliorer la gestion des erreurs ou à refactoriser le code pour le rendre encore plus performant. 🔧
+
+La prochaine étape ? Intégrer ton API avec un front dynamique et continuer à expérimenter pour maîtriser l’ensemble du processus. Amuse-toi ! 🤓
+
+> **Note :** Mon clavier QWERTY et moi avons sans doute laissé quelques fautes d’orthographe, cet article est donc encore en cours de relecture.  🤝
+
+
+À bientôt pour de nouvelles aventures de développement ! 👋
+
+
+### Meta Title :
+Créer une API REST en PHP : Les B.A.-B.A. – Tutoriel Complet
+### Meta Description :
+Découvrez pas à pas comment concevoir une API REST en PHP : de la configuration du routeur à la gestion des requêtes et des erreurs, en passant par la connexion à MySQL. Un guide pratique pour renforcer vos bases avant de passer à des frameworks plus avancés.
 ___
 ## Auteur : 
 > Ismaila Baldé
